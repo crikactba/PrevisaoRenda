@@ -1,9 +1,25 @@
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
 import streamlit as st
 import time
 import numpy as np
+
+#pandas: biblioteca utilizada para manipulação dos dados
+import pandas as pd
+#seaborn e matplotlib: bibliotecas utilizadas na visualização gráfica.
+import seaborn as sns
+import matplotlib.pyplot as plt
+#ydata_profiling:
+from ydata_profiling import ProfileReport
+
+import warnings
+warnings.filterwarnings('ignore')
+
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.metrics import mean_squared_error
+from sklearn import tree
+
+from sklearn.metrics import mean_squared_error
+
 
 
 st.set_page_config(
@@ -110,6 +126,110 @@ with st.container(border=True):
         st.subheader('Renda por Quantidade de filhos')
         fig = sns.scatterplot(data=renda, x="qtd_filhos", y="renda")
         st.pyplot(fig=plt, clear_figure=True, use_container_width=True)       
-            
+
+st.write('# Modelo de Machine Learning utilizando o algoritmo Random Forest ')
+st.write('Random Forest basicamente cria várias arvores de decisão aleatórias e com várias combinações. O resultado é uma média do resultado dessas arvores, essa média é o valor da previsão,  isso da um pouco mais de acuracia ao modelo.')
+
+st.write('Nesse momento vamos dividir a base em 2 partes, base de treino e base de teste. Na base de treino vamos treinar o nosso modelo, fazemos com que o algoritimo entenda a relação entre as varáveis e assim faça a previsão dos dados. Utilizamos a base de teste para avaliar o desempenho do modelo. Comparamos as saídas que já foram observadas e as previstas pelo modelo. Assim conseguir saber a precisão e o quão bem o modelo consegue explicar essas saídas.')
+
+
+with st.container(border=True):
+    col1, col2, col3 = st.columns([1, 1, 1])
         
-                 
+        
+    with col1:
+        
+
+        st.subheader('Modelos de Testes')  
+        # TRATAMENTOS DOS DADOS E CRIAÇÃO DO MODELO 
+        
+        #removendo as colunas data_ref, id_cliente e Unnamed
+        renda.drop(columns= ['data_ref', 'id_cliente','Unnamed: 0'], axis=1, inplace=True)
+        
+        #remove as linhas nulas
+        renda = renda.dropna()
+
+        #remove as linhas duplicadas
+        renda = renda.drop_duplicates()
+
+        renda['possui_filhos'] = renda['qtd_filhos'] != 0 
+
+        renda = pd.get_dummies(renda, columns=['sexo', 'tipo_renda', 'educacao', 'tipo_residencia', 'estado_civil','possui_filhos'])
+
+        # Separando o dataset em variáveis dependentes e independentes
+        # Y variável dependente, é o dado que queremos prever 
+        # X variável independente, são todas as demais colunas que serão utilizadas para explicar o modelo
+        y = renda['renda']
+        X = renda.drop(['renda'], axis=1).copy()
+
+        X_train, X_test, y_train, y_test = train_test_split(X,y, test_size=0.20, random_state=100)
+        modelo1 = RandomForestRegressor(max_depth=2)
+        modelo2 = RandomForestRegressor(max_depth=8)
+
+        modelo1.fit(X_train, y_train)
+        modelo2.fit(X_train, y_train)
+        
+        # Fazendo previsões no conjunto de teste
+        y_pred1 = modelo1.predict(X_test)
+        y_pred2 = modelo2.predict(X_test)  
+        
+        st.write('Criamos 2 modelos de testes. O Modelo1 com profundidade máxima da árvore de decisão de 2. O Modelo2 com profundidade máxima da árvore de decisão de 8.')
+        st.write('<b>Calculando o Erro Quadrático Médio (MSE) para ambos os modelos:</b>',unsafe_allow_html=True)
+      
+        MSE1 = mean_squared_error(y_test, y_pred1)
+        MSE2 = mean_squared_error(y_test, y_pred2)
+        
+        st.write(f'MSE do modelo 1 (max_depth=2) é {MSE1}')
+        st.write(f'MSE do modelo 2 (max_depth=8) é {MSE2}')
+        st.write('MSE Avalia a precisão do modelo prever os dados já observados.')
+     
+        df_avaliacao1 = pd.DataFrame({'Valores Reais':y_test, 'Valores Preditos':y_pred1 })
+        df_avaliacao2 = pd.DataFrame({'Valores Reais':y_test, 'Valores Preditos':y_pred2 })
+
+        st.subheader('Plotando o Modelo2 ') 
+        # Plotando o gráfico
+        plt.figure(figsize=(10,6))
+        fig = sns.scatterplot(x='Valores Reais', y='Valores Preditos', data=df_avaliacao2, color='orange')
+
+        # Adicionando uma linha de tendência (diagonal perfeita para comparação)
+        max_valor2 = max(df_avaliacao2.max()) # Pegar o maior valor entre reais e preditos para ajustar a linha
+        fig = plt.plot([0, max_valor2], [0, max_valor2], color='blue', linestyle='--') # Linha 45º
+
+        # Títulos e rótulos
+        plt.title('Valores Reais vs Valores Preditos')
+        plt.xlabel('Valores Reais')
+        plt.ylabel('Valores Preditos')
+
+        st.pyplot(fig=plt, clear_figure=True, use_container_width=True)     
+
+    with col2:
+        
+        st.subheader('Modelo de Treino')   
+        # Rodando o modelo de teste
+        modelo3 = RandomForestRegressor (max_depth=8, min_samples_leaf=20)
+        modelo3.fit(X_train, y_train) 
+
+        y_pred = modelo3.predict(X_train)
+
+        MSE3 = mean_squared_error(y_train, y_pred)
+        st.write(f'MSE do Modelo de Treino (max_depth=8) é {MSE3}')
+    
+        df_avaliacao = pd.DataFrame({'Valores Reais':y_train, 'Valores Preditos':y_pred })
+        #st.dataframe(df_avaliacao.style.highlight_max(axis=0))
+         
+        # Plotando o gráfico
+        plt.figure(figsize=(10,6))
+        fig = sns.scatterplot(x='Valores Reais', y='Valores Preditos', data=df_avaliacao, color='orange')
+
+        # Adicionando uma linha de tendência (diagonal perfeita para comparação)
+        max_valor = max(df_avaliacao.max()) # Pegar o maior valor entre reais e preditos para ajustar a linha
+        fig = plt.plot([0, max_valor], [0, max_valor], color='blue', linestyle='--') # Linha 45º
+
+        # Títulos e rótulos
+        plt.title('Valores Reais vs Valores Preditos')
+        plt.xlabel('Valores Reais')
+        plt.ylabel('Valores Preditos')
+
+        st.pyplot(fig=plt, clear_figure=True, use_container_width=True)       
+           
+
