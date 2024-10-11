@@ -1,5 +1,5 @@
 # Previsão de Renda
-Projeto desenvolvido utilizando Streamlit =)
+Projeto desenvolvido utilizando Streamlit.
 
 
 
