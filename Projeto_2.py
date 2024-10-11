@@ -128,13 +128,16 @@ with st.container(border=True):
         st.pyplot(fig=plt, clear_figure=True, use_container_width=True)       
 
 st.write('# Modelo de Machine Learning utilizando o algoritmo Random Forest ')
-st.write('Random Forest basicamente cria várias arvores de decisão aleatórias e com várias combinações. O resultado é uma média do resultado dessas arvores, essa média é o valor da previsão,  isso da um pouco mais de acuracia ao modelo.')
-
-st.write('Nesse momento vamos dividir a base em 2 partes, base de treino e base de teste. Na base de treino vamos treinar o nosso modelo, fazemos com que o algoritimo entenda a relação entre as varáveis e assim faça a previsão dos dados. Utilizamos a base de teste para avaliar o desempenho do modelo. Comparamos as saídas que já foram observadas e as previstas pelo modelo. Assim conseguir saber a precisão e o quão bem o modelo consegue explicar essas saídas.')
+st.text('Random Forest basicamente cria várias arvores de decisão aleatórias e com várias combinações. ')
+st.text('O resultado é uma média do resultado dessas arvores, essa média é o valor da previsão,  isso da um pouco mais de acuracia ao modelo.')
+st.text('Nesse momento vamos dividir a base em 2 partes, base de treino e base de teste.')
+st.text('Na base de treino vamos treinar o nosso modelo, fazemos com que o algoritimo entenda a relação entre as varáveis e assim faça a previsão dos dados.')
+st.text('Utilizamos a base de teste para avaliar o desempenho do modelo. Comparamos as saídas que já foram observadas e as previstas pelo modelo. ')
+st.text('Assim conseguir saber a precisão e o quão bem o modelo consegue explicar essas saídas.')
 
 
 with st.container(border=True):
-    col1, col2, col3 = st.columns([1, 1, 1])
+    col1, col2= st.columns([1, 1])
         
         
     with col1:
@@ -181,12 +184,11 @@ with st.container(border=True):
         
         st.write(f'MSE do modelo 1 (max_depth=2) é {MSE1}')
         st.write(f'MSE do modelo 2 (max_depth=8) é {MSE2}')
-        st.write('MSE Avalia a precisão do modelo prever os dados já observados.')
+        st.write('<b><i>MSE Avalia a precisão do modelo prever os dados já observados.</i></b>',unsafe_allow_html=True)
      
         df_avaliacao1 = pd.DataFrame({'Valores Reais':y_test, 'Valores Preditos':y_pred1 })
         df_avaliacao2 = pd.DataFrame({'Valores Reais':y_test, 'Valores Preditos':y_pred2 })
 
-        st.subheader('Plotando o Modelo2 ') 
         # Plotando o gráfico
         plt.figure(figsize=(10,6))
         fig = sns.scatterplot(x='Valores Reais', y='Valores Preditos', data=df_avaliacao2, color='orange')
@@ -213,7 +215,18 @@ with st.container(border=True):
 
         MSE3 = mean_squared_error(y_train, y_pred)
         st.write(f'MSE do Modelo de Treino (max_depth=8) é {MSE3}')
-    
+        st.write(' ')
+        st.write(' ')
+        st.write(' ')
+        st.write(' ')
+        st.write(' ')
+        st.write(' ')
+        st.write(' ')
+        st.write(' ')
+        st.write(' ')
+        st.write(' ')
+        
+        
         df_avaliacao = pd.DataFrame({'Valores Reais':y_train, 'Valores Preditos':y_pred })
         #st.dataframe(df_avaliacao.style.highlight_max(axis=0))
          
