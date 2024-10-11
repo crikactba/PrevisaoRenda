@@ -143,7 +143,7 @@ with st.container(border=True):
     with col1:
         
 
-        st.subheader('Modelos de Testes')  
+        st.subheader('Modelos de Treino')  
         # TRATAMENTOS DOS DADOS E CRIAÇÃO DO MODELO 
         
         #removendo as colunas data_ref, id_cliente e Unnamed
@@ -173,21 +173,21 @@ with st.container(border=True):
         modelo2.fit(X_train, y_train)
         
         # Fazendo previsões no conjunto de teste
-        y_pred1 = modelo1.predict(X_test)
-        y_pred2 = modelo2.predict(X_test)  
+        y_pred1 = modelo1.predict(X_train)
+        y_pred2 = modelo2.predict(X_train)  
         
         st.write('Criamos 2 modelos de testes. O Modelo1 com profundidade máxima da árvore de decisão de 2. O Modelo2 com profundidade máxima da árvore de decisão de 8.')
         st.write('<b>Calculando o Erro Quadrático Médio (MSE) para ambos os modelos:</b>',unsafe_allow_html=True)
       
-        MSE1 = mean_squared_error(y_test, y_pred1)
-        MSE2 = mean_squared_error(y_test, y_pred2)
+        MSE1 = mean_squared_error(y_train, y_pred1)
+        MSE2 = mean_squared_error(y_train, y_pred2)
         
         st.write(f'MSE do modelo 1 (max_depth=2) é {MSE1}')
         st.write(f'MSE do modelo 2 (max_depth=8) é {MSE2}')
         st.write('<b><i>MSE Avalia a precisão do modelo prever os dados já observados.</i></b>',unsafe_allow_html=True)
      
-        df_avaliacao1 = pd.DataFrame({'Valores Reais':y_test, 'Valores Preditos':y_pred1 })
-        df_avaliacao2 = pd.DataFrame({'Valores Reais':y_test, 'Valores Preditos':y_pred2 })
+        df_avaliacao1 = pd.DataFrame({'Valores Reais':y_train, 'Valores Preditos':y_pred1 })
+        df_avaliacao2 = pd.DataFrame({'Valores Reais':y_train, 'Valores Preditos':y_pred2 })
 
         # Plotando o gráfico
         plt.figure(figsize=(10,6))
@@ -206,15 +206,15 @@ with st.container(border=True):
 
     with col2:
         
-        st.subheader('Modelo de Treino')   
+        st.subheader('Modelo de Teste')   
         # Rodando o modelo de teste
         modelo3 = RandomForestRegressor (max_depth=8, min_samples_leaf=20)
-        modelo3.fit(X_train, y_train) 
+        modelo3.fit(X_test, y_test) 
 
-        y_pred = modelo3.predict(X_train)
+        y_pred = modelo3.predict(X_test)
 
-        MSE3 = mean_squared_error(y_train, y_pred)
-        st.write(f'MSE do Modelo de Treino (max_depth=8) é {MSE3}')
+        MSE3 = mean_squared_error(y_test, y_pred)
+        st.write(f'MSE do Modelo de Teste (max_depth=8) é {MSE3}')
         st.write(' ')
         st.write(' ')
         st.write(' ')
@@ -227,7 +227,7 @@ with st.container(border=True):
         st.write(' ')
         
         
-        df_avaliacao = pd.DataFrame({'Valores Reais':y_train, 'Valores Preditos':y_pred })
+        df_avaliacao = pd.DataFrame({'Valores Reais':y_test, 'Valores Preditos':y_pred })
         #st.dataframe(df_avaliacao.style.highlight_max(axis=0))
          
         # Plotando o gráfico
