@@ -172,7 +172,7 @@ with st.container(border=True):
         modelo1.fit(X_train, y_train)
         modelo2.fit(X_train, y_train)
         
-        # Fazendo previsões no conjunto de teste
+        # Fazendo previsões no conjunto de treino
         y_pred1 = modelo1.predict(X_train)
         y_pred2 = modelo2.predict(X_train)  
         
