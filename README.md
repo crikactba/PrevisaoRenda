@@ -1,5 +1,9 @@
 # Previsão de Renda
 Projeto desenvolvido utilizando Streamlit =)
 
-https://github.com/user-attachments/assets/4ad46fe4-6eb2-4028-997b-f3cc95c2c1ac
+
+
+
+
+https://github.com/user-attachments/assets/985cc2ee-9bad-4537-8fb7-0243bc9b4aa4
 
